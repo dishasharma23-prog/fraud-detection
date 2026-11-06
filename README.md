@@ -3,6 +3,8 @@
 A LightGBM model that scores card transactions for fraud, served by a FastAPI service with a small web page.
 Every score comes with the factors that drove it (SHAP values).
 
+**Live demo:** https://dishasharma23-prog.github.io/fraud-detection/ (the model's scores and SHAP explanations for 100 transactions from the test period)
+
 Trained on the [IEEE-CIS Fraud Detection](https://www.kaggle.com/c/ieee-fraud-detection) dataset:
 590,540 real e-commerce transactions from Vesta, 3.5% of them fraud.
 
@@ -58,10 +60,11 @@ docker run -p 7860:7860 fraud-detection
 fraud/features.py   feature preparation shared by training and the API
 fraud/train.py      time split, LightGBM training, metrics, demo samples
 app/main.py         FastAPI service
-app/static/         web page
+app/static/         web page served by the API
+site/build_site.py  builds the static demo in docs/ (GitHub Pages) from the trained model
 notebooks/          Colab notebook that trains the model
 model/              trained model and its test results
-Dockerfile          container, deployed on Render
+Dockerfile          container for the API
 ```
 
 Built by Disha Sharma.
