@@ -25,11 +25,7 @@ def add_features(df):
 
 def to_model_input(df, features, categories):
     """Turn raw rows into the exact table the model was trained on."""
-    data = add_features(df)
-    for col in features:
-        if col not in data:
-            data[col] = np.nan
-    data = data[features]
+    data = add_features(df).reindex(columns=features)   # missing columns become NaN
     for col, cats in categories.items():
         data[col] = pd.Categorical(data[col], categories=cats)
     for col in features:

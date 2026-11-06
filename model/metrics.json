@@ -1,0 +1,22 @@
+{
+  "pr_auc": 0.5479922145277869,
+  "roc_auc": 0.9045956447394113,
+  "pr_auc_random_baseline": 0.034409184813899145,
+  "recall_at_1pct_fpr": 0.4593996062992126,
+  "at_threshold": {
+    "recall": 0.5073818897637795,
+    "false_positive_rate": 0.015353723124408122,
+    "precision": 0.5407815368476265,
+    "flagged": 3813
+  },
+  "threshold": 0.05009947651076812,
+  "best_iteration": 1487,
+  "rows": {
+    "train": 413378,
+    "valid": 59054,
+    "test": 118108
+  },
+  "test_fraud_cases": 4064,
+  "features": 435,
+  "training_minutes": 18.4
+}
