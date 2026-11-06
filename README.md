@@ -1,13 +1,3 @@
----
-title: Card Fraud Detection
-emoji: 💳
-colorFrom: blue
-colorTo: red
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # Card Fraud Detection
 
 A LightGBM model that scores card transactions for fraud, served by a FastAPI service with a small web page.
@@ -52,8 +42,15 @@ pip install -r requirements.txt
 uvicorn app.main:app --port 7860
 ```
 
-The model files (`model/model.txt`, `meta.json`, `metrics.json`, `samples.json`) come from
+The model files in `model/` (`model.txt.gz`, `meta.json`, `metrics.json`, `samples.json`) come from
 `notebooks/train_and_deploy.ipynb`, which trains on the Kaggle data in Google Colab.
+
+Or with Docker:
+
+```bash
+docker build -t fraud-detection .
+docker run -p 7860:7860 fraud-detection
+```
 
 ## Project layout
 
@@ -62,8 +59,9 @@ fraud/features.py   feature preparation shared by training and the API
 fraud/train.py      time split, LightGBM training, metrics, demo samples
 app/main.py         FastAPI service
 app/static/         web page
-notebooks/          Colab notebook: train, then deploy to Hugging Face Spaces
-Dockerfile          container used by Hugging Face Spaces
+notebooks/          Colab notebook that trains the model
+model/              trained model and its test results
+Dockerfile          container, deployed on Render
 ```
 
 Built by Disha Sharma.

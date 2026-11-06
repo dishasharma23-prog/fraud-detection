@@ -1,5 +1,6 @@
 """FastAPI service: scores a card transaction and explains the score."""
 
+import gzip
 import json
 import math
 import os
@@ -18,7 +19,16 @@ from fraud.features import describe, to_model_input
 ROOT = Path(__file__).resolve().parent.parent
 MODEL_DIR = Path(os.environ.get("MODEL_DIR", ROOT / "model"))
 
-model = lgb.Booster(model_file=str(MODEL_DIR / "model.txt"))
+
+def load_model():
+    """The model is stored gzipped to stay small in git; a plain model.txt works too."""
+    packed = MODEL_DIR / "model.txt.gz"
+    if packed.exists():
+        return lgb.Booster(model_str=gzip.decompress(packed.read_bytes()).decode())
+    return lgb.Booster(model_file=str(MODEL_DIR / "model.txt"))
+
+
+model = load_model()
 meta = json.loads((MODEL_DIR / "meta.json").read_text())
 metrics = json.loads((MODEL_DIR / "metrics.json").read_text())
 samples = json.loads((MODEL_DIR / "samples.json").read_text())
