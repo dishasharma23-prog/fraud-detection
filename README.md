@@ -37,6 +37,17 @@ Results on the test period are in `model/metrics.json` and on the live page.
 
 Interactive docs at `/docs`.
 
+## Tests
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest -v
+```
+
+14 API tests run on every push (GitHub Actions): normal scoring, missing or invalid fields (text, negative or empty
+amounts are rejected with 422), product or card values the model has never seen, empty strings treated as missing,
+unknown IDs, and a regression check that the API still returns the exact scores published on the demo page.
+
 ## Run it locally
 
 ```bash
@@ -61,6 +72,7 @@ fraud/features.py   feature preparation shared by training and the API
 fraud/train.py      time split, LightGBM training, metrics, demo samples
 app/main.py         FastAPI service
 app/static/         web page served by the API
+tests/              API tests (pytest)
 site/build_site.py  builds the static demo in docs/ (GitHub Pages) from the trained model
 notebooks/          Colab notebook that trains the model
 model/              trained model and its test results

@@ -50,8 +50,15 @@ def clean(value):
 
 def score(values):
     """Probability of fraud, the decision at the alert threshold, and the top reasons."""
-    if "TransactionAmt" not in values or "TransactionDT" not in values:
-        raise HTTPException(422, "values must include TransactionAmt and TransactionDT")
+    for field in ("TransactionAmt", "TransactionDT"):
+        try:
+            number = float(values[field])
+        except KeyError:
+            raise HTTPException(422, f"values must include {field}")
+        except (TypeError, ValueError):
+            raise HTTPException(422, f"{field} must be a number")
+        if not math.isfinite(number) or number < 0 or (field == "TransactionAmt" and number == 0):
+            raise HTTPException(422, f"{field} must be a positive number")
     row = pd.DataFrame([values])
     for col in CATEGORIES:
         if col in row:

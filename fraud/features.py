@@ -27,7 +27,8 @@ def to_model_input(df, features, categories):
     """Turn raw rows into the exact table the model was trained on."""
     data = add_features(df).reindex(columns=features)   # missing columns become NaN
     for col, cats in categories.items():
-        data[col] = pd.Categorical(data[col], categories=cats)
+        known = data[col].where(data[col].isin(cats))          # values never seen in training become missing
+        data[col] = pd.Categorical(known, categories=cats)
     for col in features:
         if col not in categories:
             data[col] = pd.to_numeric(data[col], errors="coerce").astype("float32")
