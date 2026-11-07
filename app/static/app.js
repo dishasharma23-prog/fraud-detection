@@ -14,10 +14,21 @@ let filter = "all";
 const $ = (id) => document.getElementById(id);
 const pct = (x) => (x * 100).toFixed(1) + "%";
 
+const HINT = "Change any field and score it again to see how the model reacts.";
+
 async function getJSON(url, options) {
   const res = await fetch(url, options);
-  if (!res.ok) throw new Error(await res.text());
+  if (!res.ok) {
+    let message = `Request failed (${res.status})`;
+    try { message = (await res.json()).detail ?? message; } catch (e) {}
+    throw new Error(typeof message === "string" ? message : "Some fields are not valid");
+  }
   return res.json();
+}
+
+function showHint(text, isError) {
+  $("hint").textContent = text;
+  $("hint").classList.toggle("error", Boolean(isError));
 }
 
 function showMetrics(m) {
@@ -78,11 +89,19 @@ function edited() {
 async function scoreCurrent() {
   if (!current) return;
   const { values, changed } = edited();
-  const r = await getJSON("/api/score", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ values }),
-  });
+  let r;
+  try {
+    r = await getJSON("/api/score", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ values }),
+    });
+  } catch (err) {
+    $("result").style.display = "none";
+    showHint(`Can't score this: ${err.message}.`, true);
+    return;
+  }
+  showHint(HINT, false);
   $("result").style.display = "block";
   $("prob").textContent = pct(r.fraud_probability);
   $("pill").textContent = r.flagged ? "Flag for review" : "Approve";

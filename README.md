@@ -41,12 +41,18 @@ Interactive docs at `/docs`.
 
 ```bash
 pip install -r requirements-dev.txt
+python -m playwright install chromium
 python -m pytest -v
 ```
 
-14 API tests run on every push (GitHub Actions): normal scoring, missing or invalid fields (text, negative or empty
-amounts are rejected with 422), product or card values the model has never seen, empty strings treated as missing,
-unknown IDs, and a regression check that the API still returns the exact scores published on the demo page.
+20 tests run on every push (GitHub Actions):
+
+- **API (14):** normal scoring, missing or invalid fields (text, negative or empty amounts get a 422), product or card
+  values the model has never seen, empty strings treated as missing, unknown IDs, and a regression check that the API
+  returns the exact scores published on the demo page.
+- **Browser (6, Playwright):** the demo page shows the real metrics, lists and filters every transaction, and shows the
+  right score, decision and reasons for each one; it fits a phone screen; the API page re-scores an edited transaction
+  and explains invalid input instead of failing silently.
 
 ## Run it locally
 
@@ -72,7 +78,7 @@ fraud/features.py   feature preparation shared by training and the API
 fraud/train.py      time split, LightGBM training, metrics, demo samples
 app/main.py         FastAPI service
 app/static/         web page served by the API
-tests/              API tests (pytest)
+tests/              API and browser tests (pytest, Playwright)
 site/build_site.py  builds the static demo in docs/ (GitHub Pages) from the trained model
 notebooks/          Colab notebook that trains the model
 model/              trained model and its test results
